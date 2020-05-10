@@ -1,0 +1,100 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/relativeLayout2"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="#21B1F3"
+    tools:context=".MainActivity">
+
+    <TextView
+        android:id="@+id/titreResultat"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:contentDescription="@string/titre_annon_ant_que_la_page_contient_les_r_sultats"
+        android:gravity="center"
+        android:padding="10dp"
+        android:text="@string/r_sultats"
+        android:textColor="#000000"
+        android:textColorHighlight="#009688"
+        android:textColorLink="#00BCD4"
+        android:textSize="70sp"
+        android:textStyle="bold"
+        app:layout_constraintBottom_toTopOf="@+id/titreVideo"
+        app:layout_constraintEnd_toEndOf="@+id/titreVideo"
+        app:layout_constraintHorizontal_bias="0.5"
+        app:layout_constraintStart_toStartOf="@+id/titreVideo"
+        app:layout_constraintTop_toTopOf="parent" />
+
+    <TextView
+        android:id="@+id/titreVideo"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:contentDescription="@string/vid_o"
+        android:padding="10dp"
+        android:text="@string/vid_o"
+        android:textColor="#000000"
+        android:textColorHighlight="#009688"
+        android:textColorLink="#00BCD4"
+        android:textSize="24sp"
+        android:textStyle="normal"
+        app:layout_constraintBottom_toTopOf="@+id/vueVideo"
+        app:layout_constraintEnd_toEndOf="@+id/vueVideo"
+        app:layout_constraintHorizontal_bias="0.5"
+        app:layout_constraintStart_toStartOf="@+id/vueVideo"
+        app:layout_constraintTop_toBottomOf="@+id/titreResultat" />
+
+    <VideoView
+        android:id="@+id/vueVideo"
+        android:contentDescription="@string/vid_o_du_test_de_performance"
+        android:layout_width="0dp"
+        android:layout_height="0dp"
+        app:layout_constraintBottom_toTopOf="@+id/titreGraphique"
+        app:layout_constraintEnd_toEndOf="@+id/titreGraphique"
+        app:layout_constraintHorizontal_bias="0.5"
+        app:layout_constraintStart_toStartOf="@+id/titreGraphique"
+        app:layout_constraintTop_toBottomOf="@+id/titreVideo" />
+
+    <TextView
+        android:id="@+id/titreGraphique"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:contentDescription="@string/graphique"
+        android:padding="10dp"
+        android:text="@string/graphique"
+        android:textColor="#000000"
+        android:textColorHighlight="#009688"
+        android:textColorLink="#00BCD4"
+        android:textSize="24sp"
+        android:textStyle="normal"
+        app:layout_constraintBottom_toTopOf="@+id/curseurAvancement"
+        app:layout_constraintEnd_toEndOf="@+id/curseurAvancement"
+        app:layout_constraintHorizontal_bias="0.5"
+        app:layout_constraintStart_toStartOf="@+id/curseurAvancement"
+        app:layout_constraintTop_toBottomOf="@+id/vueVideo" />
+
+    <SeekBar
+        android:id="@+id/curseurAvancement"
+        android:contentDescription="@string/barre_d_avancement_du_graphique_synchronis_avec_la_vid_o"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        app:layout_constraintBottom_toTopOf="@+id/graphique"
+        app:layout_constraintEnd_toEndOf="@+id/graphique"
+        app:layout_constraintHorizontal_bias="0.5"
+        app:layout_constraintStart_toStartOf="@+id/graphique"
+        app:layout_constraintTop_toBottomOf="@+id/titreGraphique" />
+
+    <View
+        android:id="@+id/graphique"
+        android:contentDescription="@string/graphique_des_donn_es_isues_du_test"
+        android:layout_width="0dp"
+        android:layout_height="0dp"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.5"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/curseurAvancement"
+        app:layout_constraintVertical_bias="1.0" />
+
+</androidx.constraintlayout.widget.ConstraintLayout>

@@ -1,0 +1,31 @@
+<resources>
+    <string name="app_name">Para Perf</string>
+    <string name="bienvenue_dans_l_application">Bienvenue dans l\'application</string>
+    <string name="texte_de_bienvenue_dans_l_application_adress_e_l_utiliateur">Texte de bienvenue dans l\'application adressée à l\'utiliateur</string>
+    <string name="nom_de_l_application">Nom de l\'application</string>
+    <string name="para_perf">Para Perf</string>
+    <string name="cette_application_vous_permet_de_visualiser_plus_facilement_les_donn_es_de_votre_test_sportif_synchronis_es_avec_la_vid_o_du_test">Cette application vous permet de visualiser plus facilement les données de votre test sportif synchronisées avec la vidéo du test.</string>
+    <string name="veuillez_charger_un_fichier_excel_et_une_vid_o_dans_les_champs_correspondants">Veuillez charger un fichier Excel et une vidéo dans les champs correspondants.</string>
+    <string name="texte_d_explication_de_l_application">Texte d\'explication de l\'application</string>
+    <string name="texte_d_invitation_remplir_les_champs_donn_es_et_vid_os">Texte d\'invitation à remplir les champs données et vidéos</string>
+    <string name="donn_es">Données</string>
+    <string name="champ_pour_entrer_le_chemin_du_fichier_excel">Champ pour entrer le chemin du fichier excel</string>
+    <string name="champ_pour_entrer_le_chemin_de_la_vid_o">champ pour entrer le chemin de la vidéo</string>
+    <string name="vid_o">Vidéo</string>
+    <string name="charger">Charger</string>
+    <string name="calculer">Calculer</string>
+    <string name="titre_annon_ant_que_la_page_contient_les_r_sultats">titre annonçant que la page contient les résultats</string>
+    <string name="r_sultats">Résultats</string>
+    <string name="t_l_chargments_des_r_sultats">Téléchargments des résultats</string>
+    <string name="accueil">Accueil</string>
+    <string name="param_tres">Paramètres</string>
+    <string name="graphique">Graphique</string>
+    <string name="bouton_de_chargement_donn_es">Bouton de chargement données</string>
+    <string name="bouton_de_chargement_de_la_vid_o">Bouton de chargement de la vidéo</string>
+    <string name="bouton_qui_lance_le_calcul_du_graphique_et_l_affichage_de_la_vid_o">Bouton qui lance le calcul du graphique et l\'affichage de la vidéo</string>
+    <string name="vid_o_du_test_de_performance">Vidéo du test de performance</string>
+    <string name="barre_d_avancement_du_graphique_synchronis_avec_la_vid_o">Barre d\'avancement du graphique synchronisé avec la vidéo</string>
+    <string name="graphique_des_donn_es_isues_du_test">Graphique des données isues du test</string>
+    <string name="resultat_activity">Page des résultats</string>
+    <string name="explorateur_fichier_activity">Explorateur de fichiers</string>
+</resources>
