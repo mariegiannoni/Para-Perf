@@ -6,7 +6,7 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:background="#21B1F3"
-    tools:context=".MainActivity">
+    tools:context=".ResultatActivity">
 
     <TextView
         android:id="@+id/titreResultat"
@@ -47,14 +47,87 @@
 
     <VideoView
         android:id="@+id/vueVideo"
-        android:contentDescription="@string/vid_o_du_test_de_performance"
         android:layout_width="0dp"
         android:layout_height="0dp"
-        app:layout_constraintBottom_toTopOf="@+id/titreGraphique"
+        android:contentDescription="@string/vid_o_du_test_de_performance"
+        app:layout_constraintBottom_toTopOf="@+id/curseurAvancement"
         app:layout_constraintEnd_toEndOf="@+id/titreGraphique"
         app:layout_constraintHorizontal_bias="0.5"
         app:layout_constraintStart_toStartOf="@+id/titreGraphique"
         app:layout_constraintTop_toBottomOf="@+id/titreVideo" />
+
+    <SeekBar
+        android:id="@+id/curseurAvancement"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:background="#3D3E42"
+        android:contentDescription="@string/barre_d_avancement_du_graphique_synchronis_avec_la_vid_o"
+        android:onClick="positionne"
+        app:layout_constraintBottom_toTopOf="@+id/mediaplayer"
+        app:layout_constraintEnd_toEndOf="@+id/graphique"
+        app:layout_constraintHorizontal_bias="0.5"
+        app:layout_constraintStart_toStartOf="@+id/graphique"
+        app:layout_constraintTop_toBottomOf="@+id/vueVideo" />
+
+    <LinearLayout
+        android:id="@+id/mediaplayer"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:background="#3D3E42"
+        app:layout_constraintBottom_toTopOf="@+id/titreGraphique"
+        app:layout_constraintEnd_toEndOf="@+id/graphique"
+        app:layout_constraintHorizontal_bias="0.5"
+        app:layout_constraintStart_toStartOf="@+id/graphique"
+        app:layout_constraintTop_toBottomOf="@+id/curseurAvancement">
+
+        <ImageButton
+            android:id="@+id/rembobiner"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:contentDescription="@string/bouton_rembobiner"
+            android:onClick="rembobine"
+            android:layout_weight="1"
+            android:background="#3D3E42"
+            android:paddingBottom="10dp"
+            android:paddingTop="10dp"
+            app:srcCompat="@drawable/rembobiner" />
+
+        <ImageButton
+            android:id="@+id/play_pause"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:contentDescription="@string/bouton_play_et_pause"
+            android:onClick="playPause"
+            android:layout_weight="1"
+            android:background="#3D3E42"
+            android:paddingBottom="10dp"
+            android:paddingTop="10dp"
+            app:srcCompat="@drawable/play" />
+
+        <ImageButton
+            android:id="@+id/avance"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:contentDescription="@string/bouton_avance_rapide"
+            android:onClick="avance"
+            android:layout_weight="1"
+            android:background="#3D3E42"
+            android:paddingBottom="10dp"
+            android:paddingTop="10dp"
+            app:srcCompat="@drawable/avance" />
+
+        <ImageButton
+            android:id="@+id/debut"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:contentDescription="@string/bouton_de_retour_au_d_but_de_la_vid_o"
+            android:onClick="debut"
+            android:layout_weight="1"
+            android:background="#3D3E42"
+            android:paddingBottom="10dp"
+            android:paddingTop="10dp"
+            app:srcCompat="@drawable/debut" />
+    </LinearLayout>
 
     <TextView
         android:id="@+id/titreGraphique"
@@ -68,33 +141,22 @@
         android:textColorLink="#00BCD4"
         android:textSize="24sp"
         android:textStyle="normal"
-        app:layout_constraintBottom_toTopOf="@+id/curseurAvancement"
+        app:layout_constraintBottom_toTopOf="@+id/graphique"
         app:layout_constraintEnd_toEndOf="@+id/curseurAvancement"
         app:layout_constraintHorizontal_bias="0.5"
         app:layout_constraintStart_toStartOf="@+id/curseurAvancement"
-        app:layout_constraintTop_toBottomOf="@+id/vueVideo" />
-
-    <SeekBar
-        android:id="@+id/curseurAvancement"
-        android:contentDescription="@string/barre_d_avancement_du_graphique_synchronis_avec_la_vid_o"
-        android:layout_width="0dp"
-        android:layout_height="wrap_content"
-        app:layout_constraintBottom_toTopOf="@+id/graphique"
-        app:layout_constraintEnd_toEndOf="@+id/graphique"
-        app:layout_constraintHorizontal_bias="0.5"
-        app:layout_constraintStart_toStartOf="@+id/graphique"
-        app:layout_constraintTop_toBottomOf="@+id/titreGraphique" />
+        app:layout_constraintTop_toBottomOf="@+id/mediaplayer" />
 
     <View
         android:id="@+id/graphique"
-        android:contentDescription="@string/graphique_des_donn_es_isues_du_test"
         android:layout_width="0dp"
         android:layout_height="0dp"
+        android:contentDescription="@string/graphique_des_donn_es_isues_du_test"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintHorizontal_bias="0.5"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/curseurAvancement"
+        app:layout_constraintTop_toBottomOf="@+id/titreGraphique"
         app:layout_constraintVertical_bias="1.0" />
 
 </androidx.constraintlayout.widget.ConstraintLayout>

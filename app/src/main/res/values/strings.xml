@@ -28,4 +28,8 @@
     <string name="graphique_des_donn_es_isues_du_test">Graphique des données isues du test</string>
     <string name="resultat_activity">Page des résultats</string>
     <string name="explorateur_fichier_activity">Explorateur de fichiers</string>
+    <string name="bouton_de_retour_au_d_but_de_la_vid_o">Bouton de retour au début de la vidéo</string>
+    <string name="bouton_avance_rapide">Bouton avance rapide</string>
+    <string name="bouton_play_et_pause">Bouton play et pause</string>
+    <string name="bouton_rembobiner">Bouton rembobiner</string>
 </resources>
