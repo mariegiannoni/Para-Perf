@@ -62,7 +62,7 @@
         android:layout_height="wrap_content"
         android:background="#3D3E42"
         android:contentDescription="@string/barre_d_avancement_du_graphique_synchronis_avec_la_vid_o"
-        android:onClick="positionne"
+
         app:layout_constraintBottom_toTopOf="@+id/mediaplayer"
         app:layout_constraintEnd_toEndOf="@+id/graphique"
         app:layout_constraintHorizontal_bias="0.5"
@@ -93,16 +93,28 @@
             app:srcCompat="@drawable/rembobiner" />
 
         <ImageButton
-            android:id="@+id/play_pause"
+            android:id="@+id/play"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:contentDescription="@string/bouton_play_et_pause"
-            android:onClick="playPause"
+            android:contentDescription="@string/bouton_play_pour_lancer_la_vid_o"
+            android:onClick="play"
             android:layout_weight="1"
             android:background="#3D3E42"
             android:paddingBottom="10dp"
             android:paddingTop="10dp"
             app:srcCompat="@drawable/play" />
+
+        <ImageButton
+            android:id="@+id/pause"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:contentDescription="@string/bouton_pause_pour_arr_ter_la_vid_o"
+            android:onClick="pause"
+            android:layout_weight="1"
+            android:background="#3D3E42"
+            android:paddingBottom="10dp"
+            android:paddingTop="10dp"
+            app:srcCompat="@drawable/pause" />
 
         <ImageButton
             android:id="@+id/avance"

@@ -49,13 +49,15 @@ public class ResultatActivity extends AppCompatActivity {
     private String cheminVideo;
 
     // Boutons play, pause, avance, rembobiner, debut
-    private ImageButton boutonPlayPause;
+    private ImageButton boutonPlay;
+    private ImageButton boutonPause;
     private ImageButton boutonAvance;
     private ImageButton boutonRembobine;
     private ImageButton boutonDebut;
 
     // Temps de gestion de la vidéo
     private Handler handlerVideo = new Handler();
+    private SeekBar.OnSeekBarChangeListener listenerCurseurAvancement;
     private double currentTime = 0;
     private double startTime = 0;
     private double finalTime = 0;
@@ -67,13 +69,17 @@ public class ResultatActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_resultat);
 
-        vueVideo = (VideoView) findViewById(R.id.vueVideo);;
+        vueVideo = (VideoView) findViewById(R.id.vueVideo);
+        ;
         graphique = findViewById(R.id.graphique);
         curseurAvancement = (SeekBar) findViewById(R.id.curseurAvancement);
-        titreResultat =  (TextView) findViewById(R.id.titreResultat);
-        titreVideo =  (TextView) findViewById(R.id.titreVideo);
-        titreGraphique =  (TextView) findViewById(R.id.titreGraphique);
-        boutonPlayPause = (ImageButton) findViewById(R.id.play_pause);
+        titreResultat = (TextView) findViewById(R.id.titreResultat);
+        titreVideo = (TextView) findViewById(R.id.titreVideo);
+        titreGraphique = (TextView) findViewById(R.id.titreGraphique);
+        boutonPause = (ImageButton) findViewById(R.id.pause);
+        boutonPlay = (ImageButton) findViewById(R.id.play);
+        boutonPause.setEnabled(false);
+        boutonPlay.setEnabled(true);
         boutonAvance = (ImageButton) findViewById(R.id.avance);
         boutonRembobine = (ImageButton) findViewById(R.id.rembobiner);
         boutonDebut = (ImageButton) findViewById(R.id.debut);
@@ -88,10 +94,10 @@ public class ResultatActivity extends AppCompatActivity {
         // Affichage de la vidéo
         try {
             vueVideo.setVideoPath(cheminVideo);
-        } catch(Exception e) {
+        } catch (Exception e) {
             Context context = getApplicationContext();
             Log.e("Error Play Local Video:", e.getMessage());
-            Toast.makeText(context,"Une erreur est survenue en jouant la vidéo : "+ e.getMessage(),Toast.LENGTH_SHORT).show();
+            Toast.makeText(context, "Une erreur est survenue en jouant la vidéo : " + e.getMessage(), Toast.LENGTH_SHORT).show();
             e.printStackTrace();
         }
 
@@ -112,6 +118,27 @@ public class ResultatActivity extends AppCompatActivity {
         curseurAvancement.setProgress((int) currentTime);
 
         handlerVideo.postDelayed(changePositionTemps, 100);
+        curseurAvancement.setOnSeekBarChangeListener(new SeekBar.OnSeekBarChangeListener() {
+            @Override
+            public void onProgressChanged(SeekBar seekBar, int progress, boolean fromUser) {
+                if (fromUser) {
+                    currentTime = (double) curseurAvancement.getProgress();
+                    if (currentTime >= startTime && currentTime <= finalTime) {
+                        vueVideo.seekTo((int) currentTime);
+                    }
+                }
+            }
+
+            @Override
+            public void onStartTrackingTouch(SeekBar seekBar) {
+
+            }
+
+            @Override
+            public void onStopTrackingTouch(SeekBar seekBar) {
+
+            }
+        });
     }
 
     // Permet l'affichage du menu sur la page de résultats
@@ -141,29 +168,34 @@ public class ResultatActivity extends AppCompatActivity {
 
     /* Gestion de la vidéo */
     // Bouton play et pause
-    public void playPause(View v) {
-        if(vueVideo.isPlaying() && vueVideo.canPause()) {
+    public void pause(View v) {
+        if (vueVideo.isPlaying() && vueVideo.canPause()) {
             vueVideo.pause();
-            Drawable drawable = getResources().getDrawable(getResources().getIdentifier("pause", "drawable", getPackageName()));
-            boutonPlayPause.setImageDrawable(drawable);
+            Log.d("cas 1", "ici");
+            boutonPause.setEnabled(false);
+            boutonPlay.setEnabled(true);
         }
-        else if(currentTime <= finalTime){
+    }
+
+    public void play(View view) {
+        if (currentTime <= finalTime) {
             vueVideo.start();
-            Drawable drawable = getResources().getDrawable(getResources().getIdentifier("start", "drawable", getPackageName()));
-            boutonPlayPause.setImageDrawable(drawable);
-        }
-        else {
-            currentTime = startTime;
-            curseurAvancement.setProgress((int) currentTime);
-            vueVideo.seekTo((int) currentTime);
+            Log.d("cas 2", "ici");
+            boutonPause.setEnabled(true);
+            boutonPlay.setEnabled(false);
+        } else {
+            vueVideo.seekTo((int) startTime);
+            Log.d("cas 3", "ici");
+            boutonPause.setEnabled(true);
+            boutonPlay.setEnabled(false);
         }
     }
 
     // Bouton avance
     public void avance(View v) {
-        if (vueVideo.canSeekForward()){
+        if (vueVideo.canSeekForward()) {
             currentTime = currentTime + avanceTime;
-            if(currentTime >= finalTime) {
+            if (currentTime >= finalTime) {
                 currentTime = finalTime;
             }
             curseurAvancement.setProgress((int) currentTime);
@@ -173,9 +205,9 @@ public class ResultatActivity extends AppCompatActivity {
 
     // Bouton rembobine
     public void rembobine(View v) {
-        if (vueVideo.canSeekBackward()){
+        if (vueVideo.canSeekBackward()) {
             currentTime = currentTime - rembobineTime;
-            if(currentTime <= startTime) {
+            if (currentTime <= startTime) {
                 currentTime = startTime;
             }
             curseurAvancement.setProgress((int) currentTime);
@@ -185,21 +217,14 @@ public class ResultatActivity extends AppCompatActivity {
 
     // Bouton retour au début
     public void debut(View v) {
-        if (vueVideo.canSeekBackward()){
+        if (vueVideo.canSeekBackward()) {
             currentTime = startTime;
             curseurAvancement.setProgress((int) currentTime);
             vueVideo.seekTo((int) currentTime);
         }
     }
 
-    // Barre d'avancement : positionnement
-    public void positionne(View v) {
-        currentTime = (double) curseurAvancement.getProgress();
-        if (currentTime >= startTime && currentTime <= finalTime) {
-            curseurAvancement.setProgress((int) currentTime);
-            vueVideo.seekTo((int) currentTime);
-        }
-    }
+    // Barre d'avancement : positionnement manuel de l'utilisateur
 
     // Avancement de la barre d'avancement
     private Runnable changePositionTemps = new Runnable() {
