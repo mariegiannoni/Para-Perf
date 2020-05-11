@@ -24,6 +24,18 @@ import android.widget.VideoView;
     Cette activité est celle affichant les résultats.
     Les résultats sont un graphique calculé en backend et synchronisé à la vidéo, elle-même affichée.
     La synchronisation est visuelle grâce à un curseur d'avancement.
+
+    Les images du media player sont issus du site icone8.fr
+    Play
+    <a target="_blank" href="https://icones8.fr/icons/set/play--v1">Jouer icon</a> icône par <a target="_blank" href="https://icones8.fr">Icons8</a>
+    Pause
+    <a target="_blank" href="https://icones8.fr/icons/set/pause--v1">Pause icon</a> icône par <a target="_blank" href="https://icones8.fr">Icons8</a>
+    Avance
+    <a target="_blank" href="https://icones8.fr/icons/set/fast-forward--v1">Avance rapide icon</a> icône par <a target="_blank" href="https://icones8.fr">Icons8</a>
+    Rembobine
+    <a target="_blank" href="https://icones8.fr/icons/set/rewind">Rembobiner icon</a> icône par <a target="_blank" href="https://icones8.fr">Icons8</a>
+    Retour au début
+    <a target="_blank" href="https://icones8.fr/icons/set/rotate--v1">Faire tourner icon</a> icône par <a target="_blank" href="https://icones8.fr">Icons8</a>
 */
 
 public class ResultatActivity extends AppCompatActivity {
