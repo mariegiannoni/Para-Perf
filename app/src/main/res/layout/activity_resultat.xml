@@ -159,7 +159,7 @@
         app:layout_constraintStart_toStartOf="@+id/curseurAvancement"
         app:layout_constraintTop_toBottomOf="@+id/mediaplayer" />
 
-    <View
+    <com.jjoe64.graphview.GraphView
         android:id="@+id/graphique"
         android:layout_width="0dp"
         android:layout_height="0dp"

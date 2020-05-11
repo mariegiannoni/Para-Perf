@@ -6,7 +6,6 @@ import android.content.Intent;
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
 
-import android.graphics.drawable.Drawable;
 import android.media.MediaMetadataRetriever;
 import android.os.Bundle;
 import android.os.Handler;
