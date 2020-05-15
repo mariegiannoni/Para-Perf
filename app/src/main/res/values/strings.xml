@@ -34,4 +34,7 @@
     <string name="bouton_rembobiner">Bouton rembobiner</string>
     <string name="bouton_play_pour_lancer_la_vid_o">Bouton play pour lancer la vidéo</string>
     <string name="bouton_pause_pour_arr_ter_la_vid_o">Bouton pause pour arrêter la vidéo</string>
+    <string name="position_x">Position X</string>
+    <string name="position_y">Position Y</string>
+    <string name="position_z">Position Z</string>
 </resources>

@@ -4,6 +4,7 @@ import android.content.Context;
 import android.content.Intent;
 import androidx.appcompat.app.AppCompatActivity;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
@@ -11,6 +12,7 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import java.io.File;
+import java.io.IOException;
 import java.util.regex.Pattern;
 import java.util.regex.PatternSyntaxException;
 
@@ -136,6 +138,7 @@ public class MainActivity extends AppCompatActivity {
             if((verifieFichier(filenameDonnees, ".*.xls") || verifieFichier(filenameDonnees, ".*.xlsm")
                     || verifieFichier(filenameDonnees, ".*.xlsx")) && verifieFichier(filenameVideo, ".*.mp4")) {
                 // Calcul des résultats
+                // On ajoutera ici un appel de fonctions de calculs quand celles-ci seront créées
 
                 // Afficher l'activité des résultats
                 Intent intent = new Intent(this, ResultatActivity.class);
@@ -159,7 +162,7 @@ public class MainActivity extends AppCompatActivity {
                     && !verifieFichier(filenameDonnees, ".*.xlsx")){
                 Context context = getApplicationContext();
                 CharSequence text = "Le fichier contenant les données doit être au format .xls, .xlsx ou .xlsm.";
-                int duration = Toast.LENGTH_SHORT;
+                int duration = Toast.LENGTH_LONG;
                 Toast toast = Toast.makeText(context, text, duration);
                 toast.show();
             }
@@ -169,7 +172,7 @@ public class MainActivity extends AppCompatActivity {
             else if (!verifieFichier(filenameVideo, ".*.mp4")) {
                 Context context = getApplicationContext();
                 CharSequence text = "La vidéo doit être au format .mp4.";
-                int duration = Toast.LENGTH_SHORT;
+                int duration = Toast.LENGTH_LONG;
                 Toast toast = Toast.makeText(context, text, duration);
                 toast.show();
             }

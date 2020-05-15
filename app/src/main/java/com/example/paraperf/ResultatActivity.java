@@ -1,11 +1,16 @@
 package com.example.paraperf;
 
-import android.content.Context;
-import android.content.Intent;
+import com.jjoe64.graphview.GraphView;
+import com.jjoe64.graphview.ValueDependentColor;
+import com.jjoe64.graphview.series.BarGraphSeries;
+import com.jjoe64.graphview.series.DataPoint;
+import com.jjoe64.graphview.series.LineGraphSeries;
 
+import android.content.Intent;
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
 
+import android.graphics.Color;
 import android.media.MediaMetadataRetriever;
 import android.os.Bundle;
 import android.os.Handler;
@@ -14,9 +19,10 @@ import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.ImageButton;
+import android.widget.RadioButton;
+import android.widget.RadioGroup;
 import android.widget.SeekBar;
 import android.widget.TextView;
-import android.widget.Toast;
 import android.widget.VideoView;
 
 
@@ -36,6 +42,8 @@ import android.widget.VideoView;
     <a target="_blank" href="https://icones8.fr/icons/set/rewind">Rembobiner icon</a> icône par <a target="_blank" href="https://icones8.fr">Icons8</a>
     Retour au début
     <a target="_blank" href="https://icones8.fr/icons/set/rotate--v1">Faire tourner icon</a> icône par <a target="_blank" href="https://icones8.fr">Icons8</a>
+
+    Utilisation de la librairie opensource GraphView pour l'affichage du graphique.
 */
 
 public class ResultatActivity extends AppCompatActivity {
@@ -45,7 +53,7 @@ public class ResultatActivity extends AppCompatActivity {
     private VideoView vueVideo;
 
     // Vue du graphique
-    private View graphique;
+    private GraphView graphique;
 
     // Curseur d'avancement de la vidéo et du graphique
     private SeekBar curseurAvancement;
@@ -75,14 +83,27 @@ public class ResultatActivity extends AppCompatActivity {
     private int avanceTime = 1000; //ms
     private int rembobineTime = 1000; //ms
 
+    // Lecture du fichier excel
+    private LectureExcel donneesLues;
+
+    // Radiobutton pour gérer le graphique
+    private RadioGroup choixPos;
+    private RadioButton posX;
+    private RadioButton posY;
+    private RadioButton posZ;
+
+    // Elements pour le graphique
+    private LineGraphSeries<DataPoint> serieX;
+    private LineGraphSeries<DataPoint> serieY;
+    private LineGraphSeries<DataPoint> serieZ;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_resultat);
 
         vueVideo = (VideoView) findViewById(R.id.vueVideo);
-        ;
-        graphique = findViewById(R.id.graphique);
+        graphique = (GraphView) findViewById(R.id.graphique);
         curseurAvancement = (SeekBar) findViewById(R.id.curseurAvancement);
         titreResultat = (TextView) findViewById(R.id.titreResultat);
         titreVideo = (TextView) findViewById(R.id.titreVideo);
@@ -94,6 +115,10 @@ public class ResultatActivity extends AppCompatActivity {
         boutonAvance = (ImageButton) findViewById(R.id.avance);
         boutonRembobine = (ImageButton) findViewById(R.id.rembobiner);
         boutonDebut = (ImageButton) findViewById(R.id.debut);
+        choixPos = (RadioGroup) findViewById(R.id.choix_pos);
+        posX = (RadioButton) findViewById(R.id.pos_x);
+        posY = (RadioButton) findViewById(R.id.pos_y);
+        posZ = (RadioButton) findViewById(R.id.pos_z);
 
         init();
     }
@@ -106,9 +131,6 @@ public class ResultatActivity extends AppCompatActivity {
         try {
             vueVideo.setVideoPath(cheminVideo);
         } catch (Exception e) {
-            Context context = getApplicationContext();
-            Log.e("Error Play Local Video:", e.getMessage());
-            Toast.makeText(context, "Une erreur est survenue en jouant la vidéo : " + e.getMessage(), Toast.LENGTH_SHORT).show();
             e.printStackTrace();
         }
 
@@ -129,11 +151,14 @@ public class ResultatActivity extends AppCompatActivity {
         curseurAvancement.setProgress((int) currentTime);
 
         handlerVideo.postDelayed(changePositionTemps, 100);
+
         curseurAvancement.setOnSeekBarChangeListener(new SeekBar.OnSeekBarChangeListener() {
             @Override
             public void onProgressChanged(SeekBar seekBar, int progress, boolean fromUser) {
+                // Quand l'utilisateur appuie sur la barre de progression, le temps de la vidéo est mis à jour
+                // par rapport à la position du curseur
                 if (fromUser) {
-                    currentTime = (double) curseurAvancement.getProgress();
+                    currentTime = curseurAvancement.getProgress();
                     if (currentTime >= startTime && currentTime <= finalTime) {
                         vueVideo.seekTo((int) currentTime);
                     }
@@ -142,14 +167,76 @@ public class ResultatActivity extends AppCompatActivity {
 
             @Override
             public void onStartTrackingTouch(SeekBar seekBar) {
-
             }
 
             @Override
             public void onStopTrackingTouch(SeekBar seekBar) {
-
             }
         });
+
+        // Récupération des données dans le fichier Excel
+        donneesLues = new LectureExcel(cheminDonnees);
+
+        // Graphique
+        // Choix de position
+        choixPos.setOnCheckedChangeListener(new RadioGroup.OnCheckedChangeListener() {
+            @Override
+            public void onCheckedChanged(RadioGroup group, int checkedId) {
+                choixDePosition(group, checkedId);
+            }
+        });
+
+        // Chargement des séries de données pour les trois axes
+        // axe x
+        serieX = calculSerie(1);
+        serieX.setTitle("Positions sur l'axe x en fonction du temps");
+        serieX.setDrawBackground(true);
+        serieX.setDrawDataPoints(true);
+        serieX.setColor(Color.argb(255, 30, 125, 135));
+
+        // axe y
+        serieY = calculSerie(2);
+        serieY.setTitle("Positions sur l'axe y en fonction du temps");
+        serieY.setDrawBackground(true);
+        serieY.setDrawDataPoints(true);
+        serieX.setColor(Color.argb(255, 30, 125, 135));
+
+        // axe z
+        serieZ = calculSerie(3);
+        serieZ.setTitle("Positions sur l'axe z en fonction du temps");
+        serieZ.setDrawBackground(true);
+        serieZ.setDrawDataPoints(true);
+        serieX.setColor(Color.argb(255, 30, 125, 135));
+
+        // Position par défaut : X
+        choixDePosition(choixPos, posX.getId());
+
+        // Position min et max sur l'axe y
+        graphique.getViewport().setMinX(startTime);
+        graphique.getViewport().setMinX(startTime + 0.10 * (finalTime - startTime));
+    }
+
+    private LineGraphSeries<DataPoint> calculSerie(int choix){
+        LineGraphSeries<DataPoint> serie = new LineGraphSeries<DataPoint>();
+        if(choix == 0) { // X
+            DataPoint[] donneesXTemps = new DataPoint[]{};
+            for(int i = 0; i < donneesLues.getDonnees().size(); i++) {
+                donneesXTemps[i] = new DataPoint(donneesLues.getDonnees().get(i).getTemps(), donneesLues.getDonnees().get(i).getX());
+            }
+        }
+        else if (choix == 1) { // Y
+            DataPoint[] donneesYTemps = new DataPoint[]{};
+            for(int i = 0; i < donneesLues.getDonnees().size(); i++) {
+                donneesYTemps[i] = new DataPoint(donneesLues.getDonnees().get(i).getTemps(), donneesLues.getDonnees().get(i).getY());
+            }
+        }
+        else if (choix == 2) { // Z
+            DataPoint[] donneesZTemps = new DataPoint[]{};
+            for(int i = 0; i < donneesLues.getDonnees().size(); i++) {
+                donneesZTemps[i] = new DataPoint(donneesLues.getDonnees().get(i).getTemps(), donneesLues.getDonnees().get(i).getZ());
+            }
+        }
+        return serie;
     }
 
     // Permet l'affichage du menu sur la page de résultats
@@ -235,15 +322,71 @@ public class ResultatActivity extends AppCompatActivity {
         }
     }
 
-    // Barre d'avancement : positionnement manuel de l'utilisateur
-
-    // Avancement de la barre d'avancement
+    // Avancement du curseur au fil du temps
     private Runnable changePositionTemps = new Runnable() {
         @Override
         public void run() {
             currentTime = vueVideo.getCurrentPosition();
             curseurAvancement.setProgress((int) currentTime);
             handlerVideo.postDelayed(this, 100);
+
+            // Synchronisation avec le graphique
+            double min = startTime;
+            double max = finalTime;
+            if(currentTime - 0.05 * (finalTime - startTime) < startTime) {
+                min = startTime;
+            }
+            else {
+                min = currentTime - 0.05 * (finalTime - startTime);
+            }
+            if(currentTime + 0.05 * (finalTime - startTime) > finalTime) {
+                max = startTime;
+            }
+            else {
+                max = currentTime + 0.05 * (finalTime - startTime);
+            }
+            graphique.getViewport().setMinX(min);
+            graphique.getViewport().setMaxX(max);
         }
     };
+
+    private void choixDePosition(RadioGroup group, int checkIde) {
+        int radioId = group.getCheckedRadioButtonId();
+        BarGraphSeries<DataPoint> serieVirage;
+
+        if(radioId == posX.getId()){
+            // dessin de x par rapport au temps
+            graphique.removeAllSeries();
+            graphique.addSeries(serieX);
+            serieVirage = calculVirage(graphique.getViewport().getMaxY(true));
+            graphique.addSeries(serieVirage);
+        }
+        else if (radioId == posY.getId()){
+            // dessin de y par rapport au temps
+            graphique.removeAllSeries();
+            graphique.addSeries(serieY);
+            serieVirage = calculVirage(graphique.getViewport().getMaxY(true));
+            graphique.addSeries(serieVirage);
+        }
+        else if (radioId == posZ.getId()){
+            // dessin de z par rapport au temps
+            graphique.removeAllSeries();
+            graphique.addSeries(serieZ);
+            serieVirage = calculVirage(graphique.getViewport().getMaxY(true));
+            graphique.addSeries(serieVirage);
+        }
+    }
+
+    private BarGraphSeries<DataPoint> calculVirage(double max){
+        BarGraphSeries<DataPoint> serie = new BarGraphSeries<>();
+        DataPoint[] donneesVirage = new DataPoint[]{};
+        int j = 0;
+        for(int i = 0; i < donneesLues.getDonnees().size(); i++) {
+            if(donneesLues.getDonnees().get(i).isVirage()) {
+                donneesVirage[j] = new DataPoint(donneesLues.getDonnees().get(i).getTemps(), max);
+                j++;
+            }
+        }
+        return serie;
+    }
 }
