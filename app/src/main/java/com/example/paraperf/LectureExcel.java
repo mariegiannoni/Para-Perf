@@ -72,7 +72,8 @@ public class LectureExcel {
                         Double y = Double.valueOf(sheet.getCell(id_y, i).getContents());
                         // Conversion du virage en boolean
                         boolean virage = false;
-                        if(sheet.getCell(id_virage, i).getContents().compareToIgnoreCase("true") == 0) {
+                        if(sheet.getCell(id_virage, i).getContents().compareToIgnoreCase("true") == 0
+                                || sheet.getCell(id_virage, i).getContents().compareToIgnoreCase("vrai") == 0) {
                             virage = true;
                         }
 

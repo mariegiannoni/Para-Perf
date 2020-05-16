@@ -1,5 +1,6 @@
 package com.example.paraperf;
 
+import com.jjoe64.graphview.CursorMode;
 import com.jjoe64.graphview.GraphView;
 import com.jjoe64.graphview.series.BarGraphSeries;
 import com.jjoe64.graphview.series.DataPoint;
@@ -7,10 +8,13 @@ import com.jjoe64.graphview.series.LineGraphSeries;
 
 import android.content.Intent;
 import androidx.annotation.NonNull;
+import androidx.annotation.RequiresApi;
 import androidx.appcompat.app.AppCompatActivity;
 
+import android.database.Cursor;
 import android.graphics.Color;
 import android.media.MediaMetadataRetriever;
+import android.os.Build;
 import android.os.Bundle;
 import android.os.Handler;
 import android.view.Menu;
@@ -275,6 +279,8 @@ public class ResultatActivity extends AppCompatActivity {
 
             // Ajout des virages
             serieVirage = calculVirage(graphique.getViewport().getMaxY(true));
+            serieVirage.setDataWidth(0.5);
+            serieVirage.setSpacing(10);
             graphique.addSeries(serieVirage);
         }
 
@@ -361,6 +367,7 @@ public class ResultatActivity extends AppCompatActivity {
     }
 
     private Runnable changeAxeTemps = new Runnable() {
+        @RequiresApi(api = Build.VERSION_CODES.O)
         @Override
         public void run() {
             currentTime = vueVideo.getCurrentPosition();
@@ -371,12 +378,13 @@ public class ResultatActivity extends AppCompatActivity {
                 double max;
 
                 // Calcul du min et du max en fonction du temps
-                min = Math.max(currentTime/1000 - 0.15 * (finalTime - startTime)/1000, startTime/1000);
-                max = Math.min(currentTime/1000 + 0.15 * (finalTime - startTime)/1000, finalTime/1000);
+                min = currentTime/1000 - 0.15 * (finalTime - startTime)/1000;
+                max = currentTime/1000 + 0.15 * (finalTime - startTime)/1000;
 
                 graphique.getViewport().setXAxisBoundsManual(true);
                 graphique.getViewport().setMinX(min);
                 graphique.getViewport().setMaxX(max);
+                graphique.setCursorMode(true);
                 graphique.invalidate();
             }
 
