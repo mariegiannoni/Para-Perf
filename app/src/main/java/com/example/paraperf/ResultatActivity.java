@@ -1,7 +1,6 @@
 package com.example.paraperf;
 
 import com.jjoe64.graphview.GraphView;
-import com.jjoe64.graphview.ValueDependentColor;
 import com.jjoe64.graphview.series.BarGraphSeries;
 import com.jjoe64.graphview.series.DataPoint;
 import com.jjoe64.graphview.series.LineGraphSeries;
@@ -14,7 +13,6 @@ import android.graphics.Color;
 import android.media.MediaMetadataRetriever;
 import android.os.Bundle;
 import android.os.Handler;
-import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
@@ -76,7 +74,6 @@ public class ResultatActivity extends AppCompatActivity {
 
     // Temps de gestion de la vidéo
     private Handler handlerVideo = new Handler();
-    private SeekBar.OnSeekBarChangeListener listenerCurseurAvancement;
     private double currentTime = 0;
     private double startTime = 0;
     private double finalTime = 0;
@@ -96,6 +93,8 @@ public class ResultatActivity extends AppCompatActivity {
     private LineGraphSeries<DataPoint> serieX;
     private LineGraphSeries<DataPoint> serieY;
     private LineGraphSeries<DataPoint> serieZ;
+    private BarGraphSeries<DataPoint> serieVirage;
+    private Handler handlerGraphique = new Handler();
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -120,11 +119,13 @@ public class ResultatActivity extends AppCompatActivity {
         posY = (RadioButton) findViewById(R.id.pos_y);
         posZ = (RadioButton) findViewById(R.id.pos_z);
 
-        init();
+        initVideo();
+        initGraph();
     }
 
-    private void init() {
-        cheminDonnees = getIntent().getStringExtra("cheminDonnees");
+    /* VIDEO */
+
+    private void initVideo() {
         cheminVideo = getIntent().getStringExtra("cheminVideo");
 
         // Affichage de la vidéo
@@ -141,8 +142,6 @@ public class ResultatActivity extends AppCompatActivity {
         finalTime = Double.parseDouble(time);
         startTime = vueVideo.getCurrentPosition();
         currentTime = vueVideo.getCurrentPosition();
-
-        Log.d("Time", finalTime + " " + startTime + " " + currentTime);
 
         // Initialisation du curseur d'avancement
         if (finalTime != 0) {
@@ -173,117 +172,25 @@ public class ResultatActivity extends AppCompatActivity {
             public void onStopTrackingTouch(SeekBar seekBar) {
             }
         });
-
-        // Récupération des données dans le fichier Excel
-        donneesLues = new LectureExcel(cheminDonnees);
-
-        // Graphique
-        // Choix de position
-        choixPos.setOnCheckedChangeListener(new RadioGroup.OnCheckedChangeListener() {
-            @Override
-            public void onCheckedChanged(RadioGroup group, int checkedId) {
-                choixDePosition(group, checkedId);
-            }
-        });
-
-        // Chargement des séries de données pour les trois axes
-        // axe x
-        serieX = calculSerie(1);
-        serieX.setTitle("Positions sur l'axe x en fonction du temps");
-        serieX.setDrawBackground(true);
-        serieX.setDrawDataPoints(true);
-        serieX.setColor(Color.argb(255, 30, 125, 135));
-
-        // axe y
-        serieY = calculSerie(2);
-        serieY.setTitle("Positions sur l'axe y en fonction du temps");
-        serieY.setDrawBackground(true);
-        serieY.setDrawDataPoints(true);
-        serieX.setColor(Color.argb(255, 30, 125, 135));
-
-        // axe z
-        serieZ = calculSerie(3);
-        serieZ.setTitle("Positions sur l'axe z en fonction du temps");
-        serieZ.setDrawBackground(true);
-        serieZ.setDrawDataPoints(true);
-        serieX.setColor(Color.argb(255, 30, 125, 135));
-
-        // Position par défaut : X
-        choixDePosition(choixPos, posX.getId());
-
-        // Position min et max sur l'axe y
-        graphique.getViewport().setMinX(startTime);
-        graphique.getViewport().setMinX(startTime + 0.10 * (finalTime - startTime));
     }
 
-    private LineGraphSeries<DataPoint> calculSerie(int choix){
-        LineGraphSeries<DataPoint> serie = new LineGraphSeries<DataPoint>();
-        if(choix == 0) { // X
-            DataPoint[] donneesXTemps = new DataPoint[]{};
-            for(int i = 0; i < donneesLues.getDonnees().size(); i++) {
-                donneesXTemps[i] = new DataPoint(donneesLues.getDonnees().get(i).getTemps(), donneesLues.getDonnees().get(i).getX());
-            }
-        }
-        else if (choix == 1) { // Y
-            DataPoint[] donneesYTemps = new DataPoint[]{};
-            for(int i = 0; i < donneesLues.getDonnees().size(); i++) {
-                donneesYTemps[i] = new DataPoint(donneesLues.getDonnees().get(i).getTemps(), donneesLues.getDonnees().get(i).getY());
-            }
-        }
-        else if (choix == 2) { // Z
-            DataPoint[] donneesZTemps = new DataPoint[]{};
-            for(int i = 0; i < donneesLues.getDonnees().size(); i++) {
-                donneesZTemps[i] = new DataPoint(donneesLues.getDonnees().get(i).getTemps(), donneesLues.getDonnees().get(i).getZ());
-            }
-        }
-        return serie;
-    }
-
-    // Permet l'affichage du menu sur la page de résultats
-    @Override
-    public boolean onCreateOptionsMenu(Menu menu) {
-        getMenuInflater().inflate(R.menu.resultat_menu, menu);
-        return true;
-    }
-
-    // Permet la gestion des menus
-    @Override
-    public boolean onOptionsItemSelected(@NonNull MenuItem item) {
-        switch (item.getItemId()) {
-            case R.id.accueil:
-                // Retourner à l'activité principale
-                Intent intent = new Intent(this, MainActivity.class);
-                startActivity(intent);
-                return true;
-            case R.id.telechargement:
-                // écrire les résultats dans un fichier excel et l'enregistrer
-                // dans l'endroit choisi par l'utilisateur
-                return true;
-            default:
-                return super.onOptionsItemSelected(item);
-        }
-    }
-
-    /* Gestion de la vidéo */
-    // Bouton play et pause
+    // Bouton pause
     public void pause(View v) {
         if (vueVideo.isPlaying() && vueVideo.canPause()) {
             vueVideo.pause();
-            Log.d("cas 1", "ici");
             boutonPause.setEnabled(false);
             boutonPlay.setEnabled(true);
         }
     }
 
+    // Bouton play
     public void play(View view) {
         if (currentTime <= finalTime) {
             vueVideo.start();
-            Log.d("cas 2", "ici");
             boutonPause.setEnabled(true);
             boutonPlay.setEnabled(false);
         } else {
             vueVideo.seekTo((int) startTime);
-            Log.d("cas 3", "ici");
             boutonPause.setEnabled(true);
             boutonPlay.setEnabled(false);
         }
@@ -329,64 +236,178 @@ public class ResultatActivity extends AppCompatActivity {
             currentTime = vueVideo.getCurrentPosition();
             curseurAvancement.setProgress((int) currentTime);
             handlerVideo.postDelayed(this, 100);
-
-            // Synchronisation avec le graphique
-            double min = startTime;
-            double max = finalTime;
-            if(currentTime - 0.05 * (finalTime - startTime) < startTime) {
-                min = startTime;
-            }
-            else {
-                min = currentTime - 0.05 * (finalTime - startTime);
-            }
-            if(currentTime + 0.05 * (finalTime - startTime) > finalTime) {
-                max = startTime;
-            }
-            else {
-                max = currentTime + 0.05 * (finalTime - startTime);
-            }
-            graphique.getViewport().setMinX(min);
-            graphique.getViewport().setMaxX(max);
         }
     };
 
-    private void choixDePosition(RadioGroup group, int checkIde) {
-        int radioId = group.getCheckedRadioButtonId();
-        BarGraphSeries<DataPoint> serieVirage;
+    /* GRAPHIQUE */
 
-        if(radioId == posX.getId()){
-            // dessin de x par rapport au temps
-            graphique.removeAllSeries();
+    private void initGraph() {
+        cheminDonnees = getIntent().getStringExtra("cheminDonnees");
+
+        // Récupération des données dans le fichier Excel
+        donneesLues = new LectureExcel(cheminDonnees);
+
+        // Chargement des séries de données pour les trois axes
+        if (donneesLues.getDonnees() != null) {
+            // axe x
+            serieX = calculSerie(0);
+            serieX.setTitle("Positions sur l'axe x en fonction du temps");
+            serieX.setDrawDataPoints(true);
+            serieX.setColor(Color.argb(255, 30, 125, 135));
+
+            // axe y
+            serieY = calculSerie(1);
+            serieY.setTitle("Positions sur l'axe y en fonction du temps");
+            serieY.setDrawDataPoints(true);
+            serieY.setColor(Color.argb(255, 30, 125, 135));
+
+            // axe z
+            serieZ = calculSerie(2);
+            serieZ.setTitle("Positions sur l'axe z en fonction du temps");
+            serieZ.setDrawDataPoints(true);
+            serieZ.setColor(Color.argb(255, 30, 125, 135));
+
+            // Position par défaut : X
             graphique.addSeries(serieX);
+            graphique.setTitle("Position du capteur sur l'axe x en fonction du temps");
+            graphique.getViewport().setScrollable(true);
+            posX.setChecked(true);
+
+            // Ajout des virages
             serieVirage = calculVirage(graphique.getViewport().getMaxY(true));
             graphique.addSeries(serieVirage);
         }
-        else if (radioId == posY.getId()){
-            // dessin de y par rapport au temps
-            graphique.removeAllSeries();
-            graphique.addSeries(serieY);
-            serieVirage = calculVirage(graphique.getViewport().getMaxY(true));
-            graphique.addSeries(serieVirage);
-        }
-        else if (radioId == posZ.getId()){
-            // dessin de z par rapport au temps
-            graphique.removeAllSeries();
-            graphique.addSeries(serieZ);
-            serieVirage = calculVirage(graphique.getViewport().getMaxY(true));
-            graphique.addSeries(serieVirage);
-        }
+
+        // Choix de position
+        choixPos.setOnCheckedChangeListener(new RadioGroup.OnCheckedChangeListener() {
+            @Override
+            public void onCheckedChanged(RadioGroup group, int checkedId) {
+                choixDePosition(group, checkedId);
+            }
+        });
+
+        handlerGraphique.postDelayed(changeAxeTemps, 100);
     }
 
-    private BarGraphSeries<DataPoint> calculVirage(double max){
-        BarGraphSeries<DataPoint> serie = new BarGraphSeries<>();
-        DataPoint[] donneesVirage = new DataPoint[]{};
-        int j = 0;
-        for(int i = 0; i < donneesLues.getDonnees().size(); i++) {
-            if(donneesLues.getDonnees().get(i).isVirage()) {
-                donneesVirage[j] = new DataPoint(donneesLues.getDonnees().get(i).getTemps(), max);
-                j++;
+    // Calcul d'une série de données (choix : x - 0, y - 1 ou z - 2)
+    private LineGraphSeries<DataPoint> calculSerie(int choix){
+        LineGraphSeries<DataPoint> serie = new LineGraphSeries<>();
+        if(donneesLues.getDonnees() != null) {
+            if (donneesLues.getDonnees().size() > 0) {
+                if (choix == 0) { // X
+                    for (int i = 0; i < donneesLues.getDonnees().size(); i++) {
+                        serie.appendData(new DataPoint(donneesLues.getDonnees().get(i).getTemps(), donneesLues.getDonnees().get(i).getX()), true, donneesLues.getDonnees().size());
+                    }
+                } else if (choix == 1) { // Y
+                    for (int i = 0; i < donneesLues.getDonnees().size(); i++) {
+                        serie.appendData(new DataPoint(donneesLues.getDonnees().get(i).getTemps(), donneesLues.getDonnees().get(i).getY()), true, donneesLues.getDonnees().size());
+                    }
+                } else if (choix == 2) { // Z
+                    for (int i = 0; i < donneesLues.getDonnees().size(); i++) {
+                        serie.appendData(new DataPoint(donneesLues.getDonnees().get(i).getTemps(), donneesLues.getDonnees().get(i).getZ()), true, donneesLues.getDonnees().size());
+                    }
+                }
             }
         }
         return serie;
+    }
+
+    // Calcule une série de données contenant les virages (bar chart)
+    private BarGraphSeries<DataPoint> calculVirage(double max){
+        BarGraphSeries<DataPoint> serie = new BarGraphSeries<>();
+        if(donneesLues.getDonnees() != null) {
+            if (donneesLues.getDonnees().size() > 0) {
+                for (int i = 0; i < donneesLues.getDonnees().size(); i++) {
+                    if (donneesLues.getDonnees().get(i).isVirage()) {
+                        serie.appendData(new DataPoint(donneesLues.getDonnees().get(i).getTemps(), max), true, 500);
+                    }
+                }
+            }
+        }
+        return serie;
+    }
+
+    //  Boutons permettant de choisir l'axe visualisé sur le graphique
+    private void choixDePosition(RadioGroup group, int checkIde) {
+        int radioId = group.getCheckedRadioButtonId();
+
+       if(radioId == posX.getId()){
+            // dessin de x par rapport au temps
+            if(serieX != null) {
+                graphique.removeAllSeries();
+                graphique.addSeries(serieX);
+                graphique.addSeries(serieVirage);
+                graphique.setTitle("Position du capteur sur l'axe x en fonction du temps");
+            }
+        }
+        else if (radioId == posY.getId()){
+            // dessin de y par rapport au temps
+            if(serieY != null) {
+                graphique.removeAllSeries();
+                graphique.addSeries(serieY);
+                graphique.addSeries(serieVirage);
+                graphique.setTitle("Position du capteur sur l'axe y en fonction du temps");
+            }
+        }
+        else if (radioId == posZ.getId()){
+            // dessin de z par rapport au temps
+            if(serieZ != null) {
+                graphique.removeAllSeries();
+                graphique.addSeries(serieZ);
+                graphique.addSeries(serieVirage);
+                graphique.setTitle("Position du capteur sur l'axe z en fonction du temps");
+            }
+        }
+    }
+
+    private Runnable changeAxeTemps = new Runnable() {
+        @Override
+        public void run() {
+            currentTime = vueVideo.getCurrentPosition();
+
+            // Synchronisation avec le graphique
+            if(donneesLues.getDonnees() != null) {
+                double min;
+                double max;
+
+                // Calcul du min et du max en fonction du temps
+                min = Math.max(currentTime/1000 - 0.15 * (finalTime - startTime)/1000, startTime/1000);
+                max = Math.min(currentTime/1000 + 0.15 * (finalTime - startTime)/1000, finalTime/1000);
+
+                graphique.getViewport().setXAxisBoundsManual(true);
+                graphique.getViewport().setMinX(min);
+                graphique.getViewport().setMaxX(max);
+                graphique.invalidate();
+            }
+
+            handlerGraphique.postDelayed(this, 100);
+        }
+    };
+
+    /* MENU */
+
+    // Permet l'affichage du menu sur la page de résultats
+    @Override
+    public boolean onCreateOptionsMenu(Menu menu) {
+        getMenuInflater().inflate(R.menu.resultat_menu, menu);
+        return true;
+    }
+
+    // Permet la gestion des menus
+    @Override
+    public boolean onOptionsItemSelected(@NonNull MenuItem item) {
+        switch (item.getItemId()) {
+            case R.id.accueil:
+                // Retourner à l'activité principale
+                Intent intent = new Intent(this, MainActivity.class);
+                startActivity(intent);
+                return true;
+            case R.id.telechargement:
+                // écrire les résultats dans un fichier excel et l'enregistrer
+                // dans l'endroit choisi par l'utilisateur
+                return true;
+            default:
+                return super.onOptionsItemSelected(item);
+        }
     }
 }

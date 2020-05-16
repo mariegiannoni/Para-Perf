@@ -1,13 +1,12 @@
 package com.example.paraperf;
 
-import android.inputmethodservice.Keyboard;
+import android.util.Log;
 
 import java.io.IOException;
-import java.util.List;
+import java.util.ArrayList;
 
 import jxl.Sheet;
 import jxl.Workbook;
-import jxl.Cell;
 import jxl.read.biff.BiffException;
 
 import java.io.File;
@@ -15,7 +14,7 @@ import java.io.File;
 public class LectureExcel {
 
     private String chemin;
-    private List<PointDonnee> donnees;
+    private ArrayList<PointDonnee> donnees;
 
     public LectureExcel() {}
 
@@ -23,8 +22,13 @@ public class LectureExcel {
         Workbook workbook = null;
         try {
             // Sécurisation afin d'être sûr que donnees est vide
-            if(donnees.size() != 0) {
-                donnees.clear();
+            if(donnees != null) {
+                if (donnees.size() != 0) {
+                    donnees.clear();
+                }
+            }
+            else {
+                donnees = new ArrayList<PointDonnee>();
             }
 
             // Récupération du classeur
@@ -36,7 +40,6 @@ public class LectureExcel {
             // Récupération des données
             int nbRows = sheet.getRows();
             int nbColumns = sheet.getColumns();
-
             if(nbRows > 0 && nbColumns == 4) {
                 // x, y, temps, virage
                 int id_x = 0;
@@ -67,7 +70,6 @@ public class LectureExcel {
                         Double temps = Double.valueOf(sheet.getCell(id_temps, i).getContents());
                         Double x = Double.valueOf(sheet.getCell(id_x, i).getContents());
                         Double y = Double.valueOf(sheet.getCell(id_y, i).getContents());
-
                         // Conversion du virage en boolean
                         boolean virage = false;
                         if(sheet.getCell(id_virage, i).getContents().compareToIgnoreCase("true") == 0) {
@@ -117,12 +119,14 @@ public class LectureExcel {
 
                         // Conversion du virage en boolean
                         boolean virage = false;
-                        if(sheet.getCell(id_virage, i).getContents().compareToIgnoreCase("true") == 0) {
+                        if(sheet.getCell(id_virage, i).getContents().compareToIgnoreCase("true") == 0
+                                || sheet.getCell(id_virage, i).getContents().compareToIgnoreCase("vrai") == 0) {
                             virage = true;
                         }
 
                         // Ajout d'un noyau de données à la liste
-                        donnees.add(new PointDonnee(x, y, z, temps, virage));
+                        PointDonnee point = new PointDonnee(x, y, z, temps, virage);
+                        donnees.add(point);
                     }
                 }
             }
@@ -148,11 +152,11 @@ public class LectureExcel {
         this.chemin = chemin;
     }
 
-    public List<PointDonnee> getDonnees() {
+    public ArrayList<PointDonnee> getDonnees() {
         return donnees;
     }
 
-    public void setDonnees(List<PointDonnee> donnees) {
+    public void setDonnees(ArrayList<PointDonnee> donnees) {
         this.donnees = donnees;
     }
 
@@ -165,16 +169,16 @@ public class LectureExcel {
             return 0;
         }
         else if (identifiantX(strC2)) {
-            return 2;
+            return 1;
         }
         else if (identifiantX(strC3)) {
-            return 3;
+            return 2;
         }
         else if (identifiantX(strC4)) {
-            return 4;
+            return 3;
         }
         else if (identifiantX(strC5)) {
-            return 5;
+            return 4;
         }
         else {
             return -1;
@@ -190,16 +194,16 @@ public class LectureExcel {
             return 0;
         }
         else if (identifiantY(strC2)) {
-            return 2;
+            return 1;
         }
         else if (identifiantY(strC3)) {
-            return 3;
+            return 2;
         }
         else if (identifiantY(strC4)) {
-            return 4;
+            return 3;
         }
         else if (identifiantY(strC5)) {
-            return 5;
+            return 4;
         }
         else {
             return -1;
@@ -215,16 +219,16 @@ public class LectureExcel {
             return 0;
         }
         else if (identifiantZ(strC2)) {
-            return 2;
+            return 1;
         }
         else if (identifiantZ(strC3)) {
-            return 3;
+            return 2;
         }
         else if (identifiantZ(strC4)) {
-            return 4;
+            return 3;
         }
         else if (identifiantZ(strC5)) {
-            return 5;
+            return 4;
         }
         else {
             return -1;
@@ -240,16 +244,16 @@ public class LectureExcel {
             return 0;
         }
         else if (identifiantTemps(strC2)) {
-            return 2;
+            return 1;
         }
         else if (identifiantTemps(strC3)) {
-            return 3;
+            return 2;
         }
         else if (identifiantTemps(strC4)) {
-            return 4;
+            return 3;
         }
         else if (identifiantTemps(strC5)) {
-            return 5;
+            return 4;
         }
         else {
             return -1;
@@ -265,16 +269,16 @@ public class LectureExcel {
             return 0;
         }
         else if (identifiantVirage(strC2)) {
-            return 2;
+            return 1;
         }
         else if (identifiantVirage(strC3)) {
-            return 3;
+            return 2;
         }
         else if (identifiantVirage(strC4)) {
-            return 4;
+            return 3;
         }
         else if (identifiantVirage(strC5)) {
-            return 5;
+            return 4;
         }
         else {
             return -1;

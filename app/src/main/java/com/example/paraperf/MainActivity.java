@@ -134,9 +134,9 @@ public class MainActivity extends AppCompatActivity {
 
         if(fileDonnees.exists() && fileVideo.exists()) {
 
-            // Vérification que le fichier de données est du format : xls, xlsx, xlsm et la vidéo au format mp4
-            if((verifieFichier(filenameDonnees, ".*.xls") || verifieFichier(filenameDonnees, ".*.xlsm")
-                    || verifieFichier(filenameDonnees, ".*.xlsx")) && verifieFichier(filenameVideo, ".*.mp4")) {
+            // Vérification que le fichier de données est du format : xls, /*xlsx, xlsm*/ /*|| verifieFichier(filenameDonnees, ".*.xlsm")
+            //                    || verifieFichier(filenameDonnees, ".*.xlsx"))*/ et la vidéo au format mp4
+            if((verifieFichier(filenameDonnees, ".*.xls")  && verifieFichier(filenameVideo, ".*.mp4"))) {
                 // Calcul des résultats
                 // On ajoutera ici un appel de fonctions de calculs quand celles-ci seront créées
 
